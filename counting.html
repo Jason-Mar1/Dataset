@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCU-Counting 数据集 | SCU-Counting Dataset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        h2 {
+            margin-top: 30px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .image-item {
+            max-width: 30%;
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .image-caption {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .language-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .language-toggle button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .language-toggle button:hover {
+            background-color: #2980b9;
+        }
+        .language-toggle button.active {
+            background-color: #2c3e50;
+        }
+        .content-zh, .content-en {
+            display: none;
+        }
+        .content-zh.active, .content-en.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <button id="btn-zh" class="active">中文</button>
+        <button id="btn-en">English</button>
+    </div>
+
+    <!-- 中文内容 -->
+    <div id="content-zh" class="content-zh active">
+        <h1>SCU-Counting 数据集</h1>
+
+        <div class="section">
+            <p>在本节中，我们将从四个方面描述所收集的SCU-Counting数据集：数据收集、数据清洗与标注、统计分析以及数据集特点。</p>
+        </div>
+
+        <div class="section">
+            <h2>2.1 数据收集</h2>
+            <p>我们的数据集来源于网络和现场拍摄。在从网络收集图像时，我们依靠常见的搜索引擎，如Bing、Flicker和百度，通过特定关键词查询相关图像。对于正样本，我们使用了诸如"交通拥堵"、"放学"、"会议"、"时代广场"、"嘉年华"、"人群"、"摩托车游行"、"春节"、"河内"、"停车场"等关键词。对于负样本，我们使用了包括"鱼群"、"空旷街道"、"非洲动物迁徙"等关键词。更重要的是，我们选择了所有可用且免费修改、共享和使用的图像；因此，我们的数据集中的图像没有版权问题。</p>
+            
+            <p>在现场拍摄图像时，我们在中国的五个城市进行拍摄：苏州、上海、济南、青岛和北京，获取了一些典型的人群和交通密集场景，例如高峰时段的高速公路、旅游旺季的度假胜地、繁忙的步行街、放学后的校园、高流量的购物中心、拥挤的集市、广场和车站。在同一地点，我们从不同角度和不同光照强度下进行拍摄，以避免场景重复的问题。此外，我们还在不同天气条件下收集照片，以增强模型的泛化性能，使其更适合实际应用场景，从而使SCU-Counting数据集能够提供一个真实世界的数据集，帮助人们更好地服务社会。</p>
+        </div>
+
+        <div class="section">
+            <h2>2.2 数据清洗与标注</h2>
+            <p>通过上述两种收集方式，我们最终获得了5580张图像。数据集中的一些样本如图1所示。为确保数据集的质量，我们通过删除高度相似或难以标记对象位置的图像来清理获得的图像。最终，我们保留了2521张高质量图像。</p>
+            
+            <p>只有正样本包含对象。共有三类对象：人类、大型车辆和小型车辆，其中大型车辆类包括四个子类对象：公交车、小汽车、卡车和三轮车，小型车辆类有四个子类对象：自行车、摩托车、电动自行车和电动滑板车。大型车辆和小型车辆类的划分基于交通工具是否会对人造成遮挡，这有助于图像标注。因此，在我们的数据集中，摩托车被视为小型车辆。</p>
+            
+            <p>对于负样本或空场景图像，无需进行标注。为了标注正样本图像，我们使用了开源图像标注工具"Labelme"（Torralba等，2010年）并选择了点标注策略。整个标注过程涉及16名研究人员，耗时超过600人时。对于人类对象，我们在可观察对象头部中心进行点标注。对于交通工具对象（大型车辆和小型车辆），我们在可观察对象中心使用点标注。</p>
+            
+            <!-- 添加ECharts图表 -->
+            <div id="annotationChart-zh" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <div class="section">
+            <h2>2.3 数据统计</h2>
+            <p>SCU-Counting数据集包含108个负样本和2413个正样本。表1显示了正样本中标注对象实例的数量。总共有274,199个标注实例。我们数据集中人类实例的数量为195,018，大型车辆实例的数量为58,743，小型车辆实例的数量为20,398。</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>类别</th>
+                        <th>子类</th>
+                        <th>标注实例数</th>
+                        <th>平均每张图像标注实例数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="1">人类</td>
+                        <td>人类</td>
+                        <td>195,018</td>
+                        <td>77.35</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4">大型车辆</td>
+                        <td>小汽车</td>
+                        <td>38,831</td>
+                        <td>15.40</td>
+                    </tr>
+                    <tr>
+                        <td>卡车</td>
+                        <td>2,503</td>
+                        <td>0.99</td>
+                    </tr>
+                    <tr>
+                        <td>公交车</td>
+                        <td>6,445</td>
+                        <td>2.55</td>
+                    </tr>
+                    <tr>
+                        <td>三轮车</td>
+                        <td>10,964</td>
+                        <td>4.34</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4">小型车辆</td>
+                        <td>电动自行车</td>
+                        <td>4,600</td>
+                        <td>1.82</td>
+                    </tr>
+                    <tr>
+                        <td>电动滑板车</td>
+                        <td>9,729</td>
+                        <td>3.85</td>
+                    </tr>
+                    <tr>
+                        <td>自行车</td>
+                        <td>3,900</td>
+                        <td>1.54</td>
+                    </tr>
+                    <tr>
+                        <td>摩托车</td>
+                        <td>2,169</td>
+                        <td>0.86</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">总计</td>
+                        <td>274,199</td>
+                        <td>108.7</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>如前所述，负样本是没有标注的空场景。这些图像主要包含空旷的街道、建筑物、动物群落等。SCU-Counting数据集支持具有细粒度分类的多类对象计数（MCOC）。对于SCU-Counting中的对象，我们可以将其视为三类对象之一或九个子类对象之一，这取决于研究需求。</p>
+        </div>
+
+        <div class="section">
+            <h2>2.4 数据集特点</h2>
+            <p>据我们所知，SCU-Counting数据集是第一个在单一图像中具有多类对象标注的全监督人群和交通计数数据集，为对象计数任务提供了新的挑战。总的来说，我们从六个方面描述其特点：</p>
+            
+            <ol>
+                <li>SCU-Counting数据集中的场景来自真实世界，且非常多样化，这极大地有助于在应用SCU-Counting数据集时解决区分背景杂波的问题。</li>
+                <li>SCU-Counting数据集包含各种光照条件下的图像，这要求计数方法能够应对光照变化。</li>
+                <li>该数据集将空场景图像作为负样本，在空场景上的良好表现反映了方法的鲁棒性。</li>
+                <li>该数据集同时包含高度密集和稀疏的场景，可以验证方法对各种密度场景的适应性。</li>
+                <li>SCU-Counting中标注实例的数量在各类别之间差异很大；因此，样本不平衡问题不容忽视。</li>
+                <li>同一类别中的对象尺度差异很大。例如，在人群计数数据集中，头部的像素数可能相差几千倍，而在SCU-Counting数据集中，像素数之间的差距会更大。因此，尺度变化是SCU-Counting数据集中的一个严重问题。</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>数据集下载</h2>
+            <p>通过网盘分享的文件：CountDataset</p>
+            <p>链接: <a href="https://pan.baidu.com/s/1Cd_XX4Xa0x1HP57ZqQPoWw?pwd=atac" target="_blank">https://pan.baidu.com/s/1Cd_XX4Xa0x1HP57ZqQPoWw?pwd=atac</a> 提取码: atac</p>
+        </div>
+    </div>
+
+    <!-- 英文内容 -->
+    <div id="content-en" class="content-en">
+        <h1>SCU-Counting Dataset</h1>
+
+        <div class="section">
+            <p>In this section, we describe the collected SCU-Counting dataset from four aspects: data collection, data cleaning and annotation, statistical analysis, and characteristics of dataset.</p>
+        </div>
+
+        <div class="section">
+            <h2>2.1 Data Collection</h2>
+            <p>Our dataset was collected from the Web and live viewing. When collecting images from the Web, we relied on common search engines, such as Bing, Flicker, and Baidu, to query relevant images by special keywords. For positive samples, we used keywords like heavy traffic, leave school, meeting, time square, carnival, crowd, motorcycle parade, Spring Festival, Hanoi, parking lot and so on. For negative samples, we used keywords including fish school, empty street, African animal migration and others. More importantly, we have chosen to license all images that are created available and free to modify, share and use; thus, there are no copyright issues with the images in our dataset.</p>
+            
+            <p>When collection images from live viewing, we shot in five Chinese cities: Suzhou, Shanghai, Jinan, Qingdao, and Beijing, and got some typical crowd and traffic-intensive scenes, for example highways during peak commuting hours, vacation resorts during peak seasons, busy pedestrian streets, school campuses after school, high traffic shopping centers, crowded bazaars, squares, and stations. In the same location, we shot from different angles and under different light intensities to avoid the problem of scene repetition. In addition, we also collected photos under different weather conditions to enhance the generalization performance of a model and make it more suitable for practical application scenarios, so that the SCU-Counting dataset can provide a real-world dataset that helps ones serve the society easily.</p>
+        </div>
+
+        <div class="section">
+            <h2>2.2 Data Cleaning and Annotation</h2>
+            <p>Through two collection ways mentioned above, we finally obtained 5580 images. Some samples in the dataset are shown in Figure 1. To assure the quality of dataset, we cleared the obtained images by removing images with highly similarity or difficult-to-label object locations. In the end, we kept 2521 high-quality images.</p>
+            
+            <p>Only positive samples contain objects. There are three-class objects: human, large-vehicle, and small-vehicle, where the large-vehicle class includes four sub-class objects: bus, car, truck, and tricycle, and the small-vehicle class has four sub-class objects: bicycle, motorcycle, e-bicycle, and e-scooter. The partition of large-vehicle and small-vehicle classes is based on whether a transport causes shading to people, which is helpful for image annotation. Thus, motorcycle is regarded as small-vehicle in our dataset.</p>
+            
+            <p>It is not necessary to annotate negative samples, or images with empty scenes. To annotate positive images, we used the open source image annotation tool "Labelme" (Torralba et al., 2010) and chose the point annotation strategy. Sixteen researchers were involved in the entire annotation process, which took over 600 man-hours. For human objects, we performed point annotation at the center of the head of observable objects. For transport objects (large-vehicle and small-vehicle), we used point annotation at the center of observable objects.</p>
+            
+            <!-- 添加ECharts图表 -->
+            <div id="annotationChart-en" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <div class="section">
+            <h2>2.3 Data Statistics</h2>
+            <p>The SCU-Counting dataset contains 108 negative and 2413 positive samples. Table 1 shows the numbers of annotated instances of objects in positive samples. There are 274,199 annotated instances totally. The number of human instances in our dataset is 195,018, the number of large-vehicle instances is 58,743, and the number of small-vehicle instances is 20,398.</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Sub-class</th>
+                        <th>Annotated instances</th>
+                        <th>Annotated instances per image on average</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="1">Human</td>
+                        <td>Human</td>
+                        <td>195,018</td>
+                        <td>77.35</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4">Large-vehicle</td>
+                        <td>Car</td>
+                        <td>38,831</td>
+                        <td>15.40</td>
+                    </tr>
+                    <tr>
+                        <td>Truck</td>
+                        <td>2,503</td>
+                        <td>0.99</td>
+                    </tr>
+                    <tr>
+                        <td>Bus</td>
+                        <td>6,445</td>
+                        <td>2.55</td>
+                    </tr>
+                    <tr>
+                        <td>Tricycle</td>
+                        <td>10,964</td>
+                        <td>4.34</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4">Small-vehicle</td>
+                        <td>E-bicycle</td>
+                        <td>4,600</td>
+                        <td>1.82</td>
+                    </tr>
+                    <tr>
+                        <td>E-scooter</td>
+                        <td>9,729</td>
+                        <td>3.85</td>
+                    </tr>
+                    <tr>
+                        <td>Bicycle</td>
+                        <td>3,900</td>
+                        <td>1.54</td>
+                    </tr>
+                    <tr>
+                        <td>Motorcycle</td>
+                        <td>2,169</td>
+                        <td>0.86</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Total</td>
+                        <td>274,199</td>
+                        <td>108.7</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>As mentioned before, negative samples are empty scenes without annotation. These images contain primarily empty streets, buildings, animal colonies, etc. The SCU-Counting dataset supports MCOC with fine-grained classification. For an object in SCU-Counting, we can take it as either one of three-class objects or one of nine sub-class objects, which depends on research needs.</p>
+        </div>
+
+        <div class="section">
+            <h2>2.4 Characteristics of Dataset</h2>
+            <p>As far as we know, the SCU-Counting dataset is the first fully-supervised crowd and transportation counting dataset with annotation of multi-class objects in a single image, providing new challenges for object counting tasks. Totally, we describe the characteristics from six aspects:</p>
+            
+            <ol>
+                <li>The scenes in the SCU-Counting dataset were taken from the real world and are very diverse, which greatly helps to smooth the problem of distinguishing background clutters when applying the SCU-Counting dataset.</li>
+                <li>The SCU-Counting dataset contains images with various lighting conditions, which requires the counting methods to be able to cope with changes in illumination.</li>
+                <li>This dataset takes images with empty scenes as negative samples, and the good performance on empty scenes reflects the robustness of a method.</li>
+                <li>This dataset contains highly both dense and sparse scenes, which can validate the adaptation of methods to scenes with various density.</li>
+                <li>The number of annotated instances in SCU-Counting varies across categories; thus, the sample imbalance problem cannot be ignored.</li>
+                <li>The object scale greatly varies in the same class. For example, the pixel numbers of heads may vary by several thousand times in crowd counting datasets, whereas the gap between pixel numbers would be even larger in the SCU-Counting dataset. Thus, scale variation is a serious issue in the SCU-Counting dataset.</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>Dataset Download</h2>
+            <p>Shared file via cloud disk: CountDataset</p>
+            <p>Link: <a href="https://pan.baidu.com/s/1Cd_XX4Xa0x1HP57ZqQPoWw?pwd=atac" target="_blank">https://pan.baidu.com/s/1Cd_XX4Xa0x1HP57ZqQPoWw?pwd=atac</a> Extraction code: atac</p>
+            <p>--Shared from Baidu Netdisk Super Member v7</p>
+        </div>
+    </div>
+
+    <footer style="text-align: center; margin-top: 50px; padding: 20px; border-top: 1px solid #eee; color: #666;">
+        <p>School of Computer Science and Technology, Soochow University - Sigma Group</p>
+    </footer>
+
+    <!-- 在body结束标签前添加ECharts脚本 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        // 语言切换功能
+        document.getElementById('btn-zh').addEventListener('click', function() {
+            document.getElementById('content-zh').classList.add('active');
+            document.getElementById('content-en').classList.remove('active');
+            document.getElementById('btn-zh').classList.add('active');
+            document.getElementById('btn-en').classList.remove('active');
+            // 重新渲染中文图表
+            renderChart('annotationChart-zh', '数据集标注实例分布', ['人类', '小汽车', '卡车', '公交车', '三轮车', '电动自行车', '电动滑板车', '自行车', '摩托车']);
+        });
+        
+        document.getElementById('btn-en').addEventListener('click', function() {
+            document.getElementById('content-en').classList.add('active');
+            document.getElementById('content-zh').classList.remove('active');
+            document.getElementById('btn-en').classList.add('active');
+            document.getElementById('btn-zh').classList.remove('active');
+            // 重新渲染英文图表
+            renderChart('annotationChart-en', 'Distribution of Annotated Instances', ['Human', 'Car', 'Truck', 'Bus', 'Tricycle', 'E-bicycle', 'E-scooter', 'Bicycle', 'Motorcycle']);
+        });
+        
+        // 图表渲染函数
+        function renderChart(domId, title, legendData) {
+            var chartDom = document.getElementById(domId);
+            var myChart = echarts.init(chartDom);
+            
+            var option = {
+                title: {
+                    text: title,
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: legendData
+                },
+                series: [
+                    {
+                        name: legendData[0] === '人类' ? '标注实例' : 'Annotated Instances',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '18',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [
+                            { value: 195018, name: legendData[0] },
+                            { value: 38831, name: legendData[1] },
+                            { value: 2503, name: legendData[2] },
+                            { value: 6445, name: legendData[3] },
+                            { value: 10964, name: legendData[4] },
+                            { value: 4600, name: legendData[5] },
+                            { value: 9729, name: legendData[6] },
+                            { value: 3900, name: legendData[7] },
+                            { value: 2169, name: legendData[8] }
+                        ]
+                    }
+                ]
+            };
+            
+            myChart.setOption(option);
+        }
+        
+        // 初始渲染中文图表
+        renderChart('annotationChart-zh', '数据集标注实例分布', ['人类', '小汽车', '卡车', '公交车', '三轮车', '电动自行车', '电动滑板车', '自行车', '摩托车']);
+        
+        // 响应式调整
+        window.addEventListener('resize', function() {
+            if (document.getElementById('content-zh').classList.contains('active')) {
+                echarts.getInstanceByDom(document.getElementById('annotationChart-zh')).resize();
+            } else {
+                echarts.getInstanceByDom(document.getElementById('annotationChart-en')).resize();
+            }
+        });
+    </script>
+</body>
+</html>
