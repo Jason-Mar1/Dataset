@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FP60林业害虫数据集</title>
+    <title>FP60 Forestry Pest Dataset</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
     <style>
         /* 全局样式 */
@@ -28,6 +28,38 @@
             border-radius: 8px;
             padding: 2rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        /* Language switcher styles */
+        .lang-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-switcher button {
+            padding: 0.3rem 0.6rem;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .lang-switcher button.active {
+            background-color: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+            font-weight: bold;
+        }
+
+        /* Hide elements not matching the current language */
+        html[lang="en"] .lang-zh,
+        html[lang="zh"] .lang-en {
+            display: none;
         }
 
         h1, h2, h3 {
@@ -40,6 +72,7 @@
             padding-bottom: 1rem;
             border-bottom: 2px solid #ecf0f1;
             margin-bottom: 2rem;
+            margin-top: 2rem;
         }
 
         h2 {
@@ -99,250 +132,296 @@
 </head>
 <body>
     <div class="container">
-        <h1>FP60林业害虫数据集介绍</h1>
-        
+        <div class="lang-switcher">
+            <button id="lang-en-btn" class="active">EN</button>
+            <button id="lang-zh-btn">中</button>
+        </div>
+
+        <h1>
+            <span class="lang-en">FP60 Forestry Pest Dataset Introduction</span>
+            <span class="lang-zh">FP60林业害虫数据集介绍</span>
+        </h1>
+
         <section>
-            <h2>数据集背景</h2>
-            <p>由于当前没有公开的大规模林业有害生物数据集，因此本项目构建了覆盖常见林业害虫分布情况的FP60数据集，涵盖了15个生物科下的60种林业害虫。</p>
-        </section>
-        
-        <section>
-            <h2>数据集构建过程</h2>
-            <p>我们使用每个昆虫的拉丁学名作为搜索关键词，通过谷歌、必应、百度等常见的图像搜索引擎进行检索，并对检索结果进行人工筛选，以过滤低质量图像。在收集过程中，我们按照生物科层次结构建立了三个数据集：</p>
-            
-            <ul>
-                <li><strong>FP15</strong>：包含10类不同生物科共15种林业害虫，共1735张图像</li>
-                <li><strong>FP40</strong>：包含10类不同生物科共40种林业害虫，共3087张图像</li>
-                <li><strong>FP60</strong>：包含15类不同生物科共60种林业害虫，共7253张图像</li>
-            </ul>
-            
-            <table>
-                <tr>
-                    <th>数据子集</th>
-                    <th>生物科数</th>
-                    <th>害虫种类</th>
-                    <th>训练集</th>
-                    <th>验证集</th>
-                    <th>测试集</th>
-                    <th>总数</th>
-                </tr>
-                <tr>
-                    <td>FP15</td>
-                    <td>10</td>
-                    <td>15</td>
-                    <td>1208</td>
-                    <td>260</td>
-                    <td>267</td>
-                    <td>1735</td>
-                </tr>
-                <tr>
-                    <td>FP40</td>
-                    <td>10</td>
-                    <td>40</td>
-                    <td>3087</td>
-                    <td>665</td>
-                    <td>-</td>
-                    <td>3087</td>
-                </tr>
-                <tr>
-                    <td>FP60</td>
-                    <td>15</td>
-                    <td>60</td>
-                    <td>5049</td>
-                    <td>1085</td>
-                    <td>1119</td>
-                    <td>7253</td>
-                </tr>
-            </table>
-        </section>
-        
-        <section>
-            <h2>FP60 数据集详细分布</h2>
-            <p>FP60数据集包含15个生物科下的60种害虫，总计7253张高质量林业害虫图像。图像大小从640×480到6016×4016不等，平均大小为1248×957像素。每种林业害虫图像的数量在72张到236张之间。</p>
-            
-            <div id="chart-container"></div>
-            
-            <table>
-                <tr>
-                    <th>生物科</th>
-                    <th>害虫种类</th>
-                    <th>训练集</th>
-                    <th>验证集</th>
-                    <th>测试集</th>
-                </tr>
-                <tr>
-                    <td>蝽科</td>
-                    <td>3</td>
-                    <td>264</td>
-                    <td>57</td>
-                    <td>58</td>
-                </tr>
-                <tr>
-                    <td>珠蚧科</td>
-                    <td>5</td>
-                    <td>418</td>
-                    <td>91</td>
-                    <td>93</td>
-                </tr>
-                <tr>
-                    <td>蛾蝶科</td>
-                    <td>2</td>
-                    <td>153</td>
-                    <td>34</td>
-                    <td>34</td>
-                </tr>
-                <tr>
-                    <td>尺蛾科</td>
-                    <td>4</td>
-                    <td>521</td>
-                    <td>111</td>
-                    <td>114</td>
-                </tr>
-                <tr>
-                    <td>凤蝶科</td>
-                    <td>3</td>
-                    <td>196</td>
-                    <td>42</td>
-                    <td>43</td>
-                </tr>
-                <tr>
-                    <td>灯蛾科</td>
-                    <td>5</td>
-                    <td>346</td>
-                    <td>75</td>
-                    <td>77</td>
-                </tr>
-                <tr>
-                    <td>舟蛾科</td>
-                    <td>3</td>
-                    <td>318</td>
-                    <td>68</td>
-                    <td>71</td>
-                </tr>
-                <tr>
-                    <td>凤蛾科</td>
-                    <td>5</td>
-                    <td>520</td>
-                    <td>111</td>
-                    <td>114</td>
-                </tr>
-                <tr>
-                    <td>天蛾科</td>
-                    <td>4</td>
-                    <td>305</td>
-                    <td>64</td>
-                    <td>68</td>
-                </tr>
-                <tr>
-                    <td>舟丁甲科</td>
-                    <td>2</td>
-                    <td>136</td>
-                    <td>29</td>
-                    <td>31</td>
-                </tr>
-                <tr>
-                    <td>天牛科</td>
-                    <td>9</td>
-                    <td>420</td>
-                    <td>91</td>
-                    <td>94</td>
-                </tr>
-                <tr>
-                    <td>叶甲科</td>
-                    <td>4</td>
-                    <td>340</td>
-                    <td>74</td>
-                    <td>75</td>
-                </tr>
-                <tr>
-                    <td>吉丁甲科</td>
-                    <td>8</td>
-                    <td>859</td>
-                    <td>184</td>
-                    <td>190</td>
-                </tr>
-                <tr>
-                    <td>合计</td>
-                    <td>60</td>
-                    <td>5049</td>
-                    <td>1085</td>
-                    <td>1119</td>
-                </tr>
-            </table>
-        </section>
-        
-        <section>
-            <h2>数据标注</h2>
-            <p>对于林业害虫图像，我们通过使用Labelling软件来标注害虫在图像中的位置和该害虫所属的生物科信息，同时记录该图像中害虫的种类信息。数据集形式为：</p>
-            <p>D = {(Xi, Bi, fi, si)}i=1^N</p>
-            <p>其中Xi是原始害虫图像，Bi ∈ R^(4×ni)表示Xi中害虫的边界框，ni为Xi中害虫的数量，fi ∈ R^ni和si ∈ R^ni分别是Xi的生物科和物种标签向量，N是数据集害虫图像的数量。</p>
+            <h2>
+                <span class="lang-en">Dataset Background</span>
+                <span class="lang-zh">数据集背景</span>
+            </h2>
+            <p>
+                <span class="lang-en">Since there is currently no publicly available large-scale dataset for forestry pests, this project constructed the FP60 dataset, covering the distribution of common forestry pests, including 60 species from 15 biological families.</span>
+                <span class="lang-zh">由于当前没有公开的大规模林业有害生物数据集，因此本项目构建了覆盖常见林业害虫分布情况的FP60数据集，涵盖了15个生物科下的60种林业害虫。</span>
+            </p>
         </section>
 
         <section>
-            <h2>数据集下载</h2>
-            <p>您可以通过以下链接下载FP60数据集：</p>
+            <h2>
+                <span class="lang-en">Dataset Construction Process</span>
+                <span class="lang-zh">数据集构建过程</span>
+            </h2>
             <p>
-                <strong>链接:</strong> <a href="https://pan.baidu.com/s/1Qg-Zcch9nK6XsC3dOqBESQ?pwd=niug" target="_blank">https://pan.baidu.com/s/1Qg-Zcch9nK6XsC3dOqBESQ?pwd=niug</a><br>
-                <strong>提取码:</strong> niug
+                <span class="lang-en">We used the Latin scientific name of each insect as search keywords to retrieve images from common search engines like Google, Bing, and Baidu. The search results were manually screened to filter out low-quality images. During the collection process, we established three datasets according to the biological family hierarchy:</span>
+                <span class="lang-zh">我们使用每个昆虫的拉丁学名作为搜索关键词，通过谷歌、必应、百度等常见的图像搜索引擎进行检索，并对检索结果进行人工筛选，以过滤低质量图像。在收集过程中，我们按照生物科层次结构建立了三个数据集：</span>
+            </p>
+
+            <ul>
+                <li><strong>FP15</strong>:
+                    <span class="lang-en">Contains 15 forestry pest species from 10 different biological families, totaling 1735 images.</span>
+                    <span class="lang-zh">包含10类不同生物科共15种林业害虫，共1735张图像。</span>
+                </li>
+                <li><strong>FP40</strong>:
+                    <span class="lang-en">Contains 40 forestry pest species from 10 different biological families, totaling 3087 images.</span>
+                    <span class="lang-zh">包含10类不同生物科共40种林业害虫，共3087张图像。</span>
+                </li>
+                <li><strong>FP60</strong>:
+                    <span class="lang-en">Contains 60 forestry pest species from 15 different biological families, totaling 7253 images.</span>
+                    <span class="lang-zh">包含15类不同生物科共60种林业害虫，共7253张图像。</span>
+                </li>
+            </ul>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><span class="lang-en">Subset</span><span class="lang-zh">数据子集</span></th>
+                        <th><span class="lang-en">Families</span><span class="lang-zh">生物科数</span></th>
+                        <th><span class="lang-en">Species</span><span class="lang-zh">害虫种类</span></th>
+                        <th><span class="lang-en">Training Set</span><span class="lang-zh">训练集</span></th>
+                        <th><span class="lang-en">Validation Set</span><span class="lang-zh">验证集</span></th>
+                        <th><span class="lang-en">Test Set</span><span class="lang-zh">测试集</span></th>
+                        <th><span class="lang-en">Total</span><span class="lang-zh">总数</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FP15</td>
+                        <td>10</td>
+                        <td>15</td>
+                        <td>1208</td>
+                        <td>260</td>
+                        <td>267</td>
+                        <td>1735</td>
+                    </tr>
+                    <tr>
+                        <td>FP40</td>
+                        <td>10</td>
+                        <td>40</td>
+                        <td>3087</td>
+                        <td>665</td>
+                        <td>-</td>
+                        <td>3087</td>
+                    </tr>
+                    <tr>
+                        <td>FP60</td>
+                        <td>15</td>
+                        <td>60</td>
+                        <td>5049</td>
+                        <td>1085</td>
+                        <td>1119</td>
+                        <td>7253</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>
+                <span class="lang-en">FP60 Dataset Detailed Distribution</span>
+                <span class="lang-zh">FP60 数据集详细分布</span>
+            </h2>
+            <p>
+                <span class="lang-en">The FP60 dataset includes 60 pest species from 15 biological families, totaling 7253 high-quality forestry pest images. Image sizes range from 640×480 to 6016×4016 pixels, with an average size of 1248×957 pixels. The number of images per forestry pest species ranges from 72 to 236.</span>
+                <span class="lang-zh">FP60数据集包含15个生物科下的60种害虫，总计7253张高质量林业害虫图像。图像大小从640×480到6016×4016不等，平均大小为1248×957像素。每种林业害虫图像的数量在72张到236张之间。</span>
+            </p>
+
+            <div id="chart-container"></div>
+
+            <table>
+                 <thead>
+                    <tr>
+                        <th><span class="lang-en">Family</span><span class="lang-zh">生物科</span></th>
+                        <th><span class="lang-en">Species</span><span class="lang-zh">害虫种类</span></th>
+                        <th><span class="lang-en">Training Set</span><span class="lang-zh">训练集</span></th>
+                        <th><span class="lang-en">Validation Set</span><span class="lang-zh">验证集</span></th>
+                        <th><span class="lang-en">Test Set</span><span class="lang-zh">测试集</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="lang-en">Pentatomidae</span><span class="lang-zh">蝽科</span></td>
+                        <td>3</td><td>264</td><td>57</td><td>58</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Margarodidae</span><span class="lang-zh">珠蚧科</span></td>
+                        <td>5</td><td>418</td><td>91</td><td>93</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Lepidoptera</span><span class="lang-zh">蛾蝶科</span></td>
+                        <td>2</td><td>153</td><td>34</td><td>34</td>
+                    </tr>
+                     <tr>
+                        <td><span class="lang-en">Geometridae</span><span class="lang-zh">尺蛾科</span></td>
+                        <td>4</td><td>521</td><td>111</td><td>114</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Papilionidae</span><span class="lang-zh">凤蝶科</span></td>
+                        <td>3</td><td>196</td><td>42</td><td>43</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Arctiidae</span><span class="lang-zh">灯蛾科</span></td>
+                        <td>5</td><td>346</td><td>75</td><td>77</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Notodontidae</span><span class="lang-zh">舟蛾科</span></td>
+                        <td>3</td><td>318</td><td>68</td><td>71</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Saturniidae</span><span class="lang-zh">凤蛾科</span></td>
+                        <td>5</td><td>520</td><td>111</td><td>114</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Sphingidae</span><span class="lang-zh">天蛾科</span></td>
+                        <td>4</td><td>305</td><td>64</td><td>68</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Bostrichidae</span><span class="lang-zh">舟丁甲科</span></td>
+                        <td>2</td><td>136</td><td>29</td><td>31</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Cerambycidae</span><span class="lang-zh">天牛科</span></td>
+                        <td>9</td><td>420</td><td>91</td><td>94</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Chrysomelidae</span><span class="lang-zh">叶甲科</span></td>
+                        <td>4</td><td>340</td><td>74</td><td>75</td>
+                    </tr>
+                    <tr>
+                        <td><span class="lang-en">Buprestidae</span><span class="lang-zh">吉丁甲科</span></td>
+                        <td>8</td><td>859</td><td>184</td><td>190</td>
+                    </tr>
+                    <tr>
+                        <td><strong><span class="lang-en">Total</span><span class="lang-zh">合计</span></strong></td>
+                        <td><strong>60</strong></td><td><strong>5049</strong></td><td><strong>1085</strong></td><td><strong>1119</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>
+                <span class="lang-en">Data Annotation</span>
+                <span class="lang-zh">数据标注</span>
+            </h2>
+            <p>
+                <span class="lang-en">For the forestry pest images, we used the Labelling software to annotate the location of the pests in the image and the biological family information to which the pest belongs, while also recording the species information of the pest in the image. The dataset format is:</span>
+                <span class="lang-zh">对于林业害虫图像，我们通过使用Labelling软件来标注害虫在图像中的位置和该害虫所属的生物科信息，同时记录该图像中害虫的种类信息。数据集形式为：</span>
+            </p>
+            <p>D = {(Xi, Bi, fi, si)}i=1^N</p>
+            <p>
+                <span class="lang-en">Where Xi is the original pest image, Bi ∈ R^(4×ni) represents the bounding boxes of the pests in Xi, ni is the number of pests in Xi, fi ∈ R^ni and si ∈ R^ni are the family and species label vectors of Xi, respectively, and N is the number of pest images in the dataset.</span>
+                <span class="lang-zh">其中Xi是原始害虫图像，Bi ∈ R^(4×ni)表示Xi中害虫的边界框，ni为Xi中害虫的数量，fi ∈ R^ni和si ∈ R^ni分别是Xi的生物科和物种标签向量，N是数据集害虫图像的数量。</span>
+            </p>
+        </section>
+
+        <section>
+            <h2>
+                <span class="lang-en">Dataset Download</span>
+                <span class="lang-zh">数据集下载</span>
+            </h2>
+            <p>
+                <span class="lang-en">You can download the FP60 dataset via the following link:</span>
+                <span class="lang-zh">您可以通过以下链接下载FP60数据集：</span>
+            </p>
+            <p>
+                <strong><span class="lang-en">Link:</span><span class="lang-zh">链接:</span></strong> <a href="https://pan.baidu.com/s/1Qg-Zcch9nK6XsC3dOqBESQ?pwd=niug" target="_blank">https://pan.baidu.com/s/1Qg-Zcch9nK6XsC3dOqBESQ?pwd=niug</a><br>
+                <strong><span class="lang-en">Extraction Code:</span><span class="lang-zh">提取码:</span></strong> niug
             </p>
         </section>
     </div>
 
     <footer>
-        <p>苏州大学计算机科学与技术学院 - Sigma组</p>
+        <p>
+            <span class="lang-en">School of Computer Science and Technology, Soochow University - Sigma Group</span>
+            <span class="lang-zh">苏州大学计算机科学与技术学院 - Sigma组</span>
+        </p>
     </footer>
 
     <script>
-        // 页面加载完成后执行
-        document.addEventListener('DOMContentLoaded', function() {
-            // 绘制数据集分布图表
-            drawDatasetDistributionChart();
-        });
+        // ECharts instance
+        let chart = null;
+        const chartContainer = document.getElementById('chart-container');
 
-        // 绘制数据集分布图表
-        function drawDatasetDistributionChart() {
-            // 获取图表容器
-            const chartContainer = document.getElementById('chart-container');
-            
-            // 初始化ECharts实例
-            const chart = echarts.init(chartContainer);
-            
-            // 配置图表选项
+        // Language data for ECharts
+        const chartLangData = {
+            en: {
+                title: 'Distribution of Pest Images by Family in FP60 Dataset',
+                seriesName: 'Image Count',
+                legend: ['Pentatomidae', 'Margarodidae', 'Lepidoptera', 'Geometridae', 'Papilionidae', 'Arctiidae', 'Notodontidae', 'Saturniidae', 'Sphingidae', 'Bostrichidae', 'Cerambycidae', 'Chrysomelidae', 'Buprestidae']
+            },
+            zh: {
+                title: 'FP60数据集各科害虫图像分布',
+                seriesName: '图像数量',
+                legend: ['蝽科', '珠蚧科', '蛾蝶科', '尺蛾科', '凤蝶科', '灯蛾科', '舟蛾科', '凤蛾科', '天蛾科', '舟丁甲科', '天牛科', '叶甲科', '吉丁甲科']
+            }
+        };
+
+        // Chart data (remains the same)
+        const chartData = [
+            {value: 379, nameIndex: 0}, // Pentatomidae / 蝽科
+            {value: 602, nameIndex: 1}, // Margarodidae / 珠蚧科
+            {value: 221, nameIndex: 2}, // Lepidoptera / 蛾蝶科
+            {value: 746, nameIndex: 3}, // Geometridae / 尺蛾科
+            {value: 281, nameIndex: 4}, // Papilionidae / 凤蝶科
+            {value: 498, nameIndex: 5}, // Arctiidae / 灯蛾科
+            {value: 457, nameIndex: 6}, // Notodontidae / 舟蛾科
+            {value: 745, nameIndex: 7}, // Saturniidae / 凤蛾科
+            {value: 437, nameIndex: 8}, // Sphingidae / 天蛾科
+            {value: 196, nameIndex: 9}, // Bostrichidae / 舟丁甲科
+            {value: 605, nameIndex: 10}, // Cerambycidae / 天牛科
+            {value: 489, nameIndex: 11}, // Chrysomelidae / 叶甲科
+            {value: 1233, nameIndex: 12} // Buprestidae / 吉丁甲科
+        ];
+
+        // Function to draw/update chart
+        function drawDatasetDistributionChart(lang = 'en') {
+            if (!chartContainer) return;
+            if (!chart) {
+                chart = echarts.init(chartContainer);
+                // Add resize listener only once
+                 window.addEventListener('resize', function() {
+                    if(chart) {
+                        chart.resize();
+                    }
+                });
+            }
+
+            const currentLangData = chartLangData[lang];
+
+            // Map data with current language legend names
+            const seriesData = chartData.map(item => ({
+                value: item.value,
+                name: currentLangData.legend[item.nameIndex]
+            }));
+
             const option = {
                 title: {
-                    text: 'FP60数据集各科害虫图像分布',
+                    text: currentLangData.title,
                     left: 'center'
                 },
                 tooltip: {
                     trigger: 'item',
-                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    formatter: `{a} <br/>{b}: {c} ({d}%)` // Tooltip format is language-agnostic here
                 },
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: ['蝽科', '珠蚧科', '蛾蝶科', '尺蛾科', '凤蝶科', '灯蛾科', '舟蛾科', '凤蛾科', '天蛾科', '舟丁甲科', '天牛科', '叶甲科', '吉丁甲科']
+                    data: currentLangData.legend
                 },
                 series: [
                     {
-                        name: '图像数量',
+                        name: currentLangData.seriesName,
                         type: 'pie',
                         radius: '55%',
                         center: ['50%', '60%'],
-                        data: [
-                            {value: 379, name: '蝽科'},
-                            {value: 602, name: '珠蚧科'},
-                            {value: 221, name: '蛾蝶科'},
-                            {value: 746, name: '尺蛾科'},
-                            {value: 281, name: '凤蝶科'},
-                            {value: 498, name: '灯蛾科'},
-                            {value: 457, name: '舟蛾科'},
-                            {value: 745, name: '凤蛾科'},
-                            {value: 437, name: '天蛾科'},
-                            {value: 196, name: '舟丁甲科'},
-                            {value: 605, name: '天牛科'},
-                            {value: 489, name: '叶甲科'},
-                            {value: 1233, name: '吉丁甲科'}
-                        ],
+                        data: seriesData,
                         emphasis: {
                             itemStyle: {
                                 shadowBlur: 10,
@@ -353,15 +432,53 @@
                     }
                 ]
             };
-            
-            // 使用配置项设置图表
-            chart.setOption(option);
-            
-            // 响应窗口大小变化，重新调整图表大小
-            window.addEventListener('resize', function() {
-                chart.resize();
-            });
+
+            chart.setOption(option, true); // Use true to not merge options
         }
+
+        // Function to switch language
+        function switchLanguage(lang) {
+            if (lang !== 'en' && lang !== 'zh') {
+                lang = 'en'; // Default to English if invalid
+            }
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+
+            // Update button active state
+            document.getElementById('lang-en-btn').classList.toggle('active', lang === 'en');
+            document.getElementById('lang-zh-btn').classList.toggle('active', lang === 'zh');
+
+            // Update page title
+            document.title = lang === 'en' ? 'FP60 Forestry Pest Dataset' : 'FP60林业害虫数据集';
+
+            // Update chart
+            drawDatasetDistributionChart(lang);
+
+            // Store preference
+            try {
+                localStorage.setItem('preferredLang', lang);
+            } catch (e) {
+                console.warn("Could not save language preference to localStorage.");
+            }
+        }
+
+        // Event listeners for language buttons
+        document.getElementById('lang-en-btn').addEventListener('click', () => switchLanguage('en'));
+        document.getElementById('lang-zh-btn').addEventListener('click', () => switchLanguage('zh'));
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            let preferredLang = 'en'; // Default
+            try {
+                 // Try to get saved preference, default to 'en'
+                preferredLang = localStorage.getItem('preferredLang') || 'en';
+            } catch (e) {
+                 console.warn("Could not read language preference from localStorage.");
+            }
+            // Apply the language setting
+            switchLanguage(preferredLang);
+        });
+
     </script>
 </body>
 </html> 
